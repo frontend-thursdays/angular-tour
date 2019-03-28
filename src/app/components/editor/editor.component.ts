@@ -14,6 +14,7 @@ export class EditorComponent implements OnInit, CanDeactivateComponent {
 
   public form: FormGroup;
   public user: User;
+  public submitted = false;
 
   constructor(private builder: FormBuilder, private service: UserService,
               private router: Router, public route: ActivatedRoute) {
@@ -35,10 +36,19 @@ export class EditorComponent implements OnInit, CanDeactivateComponent {
     return this.form.disabled || this.form.untouched;
   }
 
+  public touch() {
+    Object.values(this.form.controls).forEach(control => {
+      control.markAsTouched();
+    });
+  }
+
 
 
   public onSubmit() {
-    if(!this.form.valid) {return;}
+    if (!this.form.valid) {
+      this.touch();
+      return;
+    }
     const properties = this.form.value;
     this.user ? this.service.editUser(this.user.id, properties) :  this.service.addUser(properties);
     this.router.navigate(['/main']);
